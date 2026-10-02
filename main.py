@@ -16,6 +16,12 @@ def criar_nome_usuario():
     entry_nome.pack_forget()
     botao_confirmar.pack_forget()
     botao_adicionar_gasto.pack(pady=10)
+    botao_adicionar_receita.pack(pady=10)
+    lista_gastos.pack()
+    label_total.pack()
+    lista_receitas.pack()
+    label_total_receitas.pack()
+    label_saldo.pack()
 
 
 def salvar_gasto(valor, categoria, janela):
@@ -32,7 +38,7 @@ def salvar_gasto(valor, categoria, janela):
         messagebox.showerror("Erro", "Por favor, digite um valor numérico válido.", parent=janela)
         return
 
-    if valor_float < 0:
+    if valor_float <= 0:
         messagebox.showerror("Erro", "Por favor, digite um valor positivo.", parent=janela)
         return
 
@@ -40,6 +46,7 @@ def salvar_gasto(valor, categoria, janela):
 
     gastos.append({"valor": valor_float, "categoria": categoria})
     listar_gastos()
+    atualizar_totais()
     janela.destroy()
 
 def criar_gasto():
@@ -116,7 +123,7 @@ def salvar_receita(valor, categoria, janela):
         messagebox.showerror("Erro", "Por favor, digite um valor numérico válido.", parent=janela)
         return
 
-    if valor_float < 0:
+    if valor_float <= 0:
         messagebox.showerror("Erro", "Por favor, digite um valor positivo.", parent=janela)
         return
 
@@ -124,6 +131,7 @@ def salvar_receita(valor, categoria, janela):
 
     receitas.append({"valor": valor_float, "categoria": categoria})
     listar_receitas()
+    atualizar_totais()
     janela.destroy()
 
 
@@ -163,26 +171,19 @@ botao_confirmar = tk.Button(janelagastos, text="Confirmar", command=criar_nome_u
 botao_confirmar.pack()
 
 botao_adicionar_gasto = tk.Button(janelagastos, text="Adicionar Gasto", command=criar_gasto)
-botao_adicionar_gasto.pack()
 
 botao_adicionar_receita = tk.Button(janelagastos, text="Adicionar Receita", command=criar_receita)
-botao_adicionar_receita.pack()
 
 lista_gastos = tk.Listbox(janelagastos, width=45, height=10)
-lista_gastos.pack()
 
 label_total = tk.Label(janelagastos, text="Total: R$ 0,00")
-label_total.pack()
 
 lista_receitas = tk.Listbox(janelagastos, width=45, height=10)
-lista_receitas.pack()
 
 label_total_receitas = tk.Label(janelagastos, text="Total de Receitas: R$ 0,00")
-label_total_receitas.pack()
 
 label_saldo = tk.Label(janelagastos, text="Saldo: R$ 0,00")
-label_saldo.pack()
 
-tk.Label(janelagastos, text="Controle de Gastos", font=("Arial", 16)).pack(pady=10)
+tk.Label(janelagastos, text="Controle Financeiro", font=("Arial", 16)).pack(pady=10)
 
 janelagastos.mainloop()
