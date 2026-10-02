@@ -1,6 +1,10 @@
 import tkinter as tk
+from tkinter import ttk
 import tkinter as messagebox
 import tkinter.messagebox as messagebox
+
+categorias_gastos = ["Alimentação", "Transporte", "Moradia", "Saúde", "Educação", "Lazer", "Outros"]
+categorias_receitas = ["Salário", "Freelance", "Investimentos", "Presentes", "Outros"]
 
 receitas = []
 gastos = []
@@ -64,9 +68,13 @@ def criar_gasto():
     entry_gasto = tk.Entry(new_window)
     entry_gasto.pack()
 
-    label_categoria = tk.Label(new_window, text="Digite a categoria do gasto:")
+    label_categoria = tk.Label(new_window, text="Escolha a categoria do gasto:")
     label_categoria.pack()
-    entry_categoria = tk.Entry(new_window)
+
+    categorias_var = tk.StringVar(value=categorias_gastos[0])
+
+    entry_categoria = ttk.Combobox(new_window, textvariable=categorias_var, values=categorias_gastos, state="readonly")
+
     entry_categoria.pack()
 
     botao_salvar = tk.Button(new_window, text="Salvar Gasto", command=lambda: salvar_gasto(entry_gasto.get(), entry_categoria.get(), new_window))
@@ -101,9 +109,10 @@ def criar_receita():
     entry_receita = tk.Entry(new_window)
     entry_receita.pack()
 
-    label_categoria = tk.Label(new_window, text="Digite a categoria da receita:")
+    label_categoria = tk.Label(new_window, text="Escolha a categoria da receita:")
     label_categoria.pack()
-    entry_categoria = tk.Entry(new_window)
+    categorias_var = tk.StringVar(value=categorias_receitas[0])
+    entry_categoria = ttk.Combobox(new_window, textvariable=categorias_var, values=categorias_receitas, state="readonly")
     entry_categoria.pack()
 
     botao_salvar = tk.Button(new_window, text="Salvar Receita", command=lambda: salvar_receita(entry_receita.get(), entry_categoria.get(), new_window))
