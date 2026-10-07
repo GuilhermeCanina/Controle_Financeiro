@@ -1,13 +1,12 @@
 import tkinter as tk
-from tkinter import ttk
-import tkinter as messagebox
-import tkinter.messagebox as messagebox
+from tkinter import ttk, messagebox
 
 categorias_gastos = ["Alimentação", "Transporte", "Moradia", "Saúde", "Educação", "Lazer", "Outros"]
 categorias_receitas = ["Salário", "Freelance", "Investimentos", "Presentes", "Outros"]
 
 receitas = []
 gastos = []
+
 
 def criar_nome_usuario():
     nome_usuario = entry_nome.get().strip()
@@ -19,21 +18,26 @@ def criar_nome_usuario():
     label_nome.config(text=f"Bem-vindo(a), {nome_usuario}!", fg="black")
     entry_nome.pack_forget()
     botao_confirmar.pack_forget()
+
     botao_adicionar_gasto.pack(pady=10)
     botao_adicionar_receita.pack(pady=10)
+
     lista_gastos.pack()
+    botao_excluir_gasto.pack(pady=5)
     label_total.pack()
+
     lista_receitas.pack()
+    botao_excluir_receita.pack(pady=5)
     label_total_receitas.pack()
     label_saldo.pack()
 
 
 def salvar_gasto(valor, categoria, janela):
-    valor = valor.strip().replace(',', '.')
+    valor = valor.strip().replace(",", ".")
     categoria = categoria.strip()
 
     if not valor or not categoria:
-        messagebox.showerror("Erro", "Por favor, preencha todos os campos.")
+        messagebox.showerror("Erro", "Por favor, preencha todos os campos.", parent=janela)
         return
 
     try:
@@ -46,15 +50,17 @@ def salvar_gasto(valor, categoria, janela):
         messagebox.showerror("Erro", "Por favor, digite um valor positivo.", parent=janela)
         return
 
-    messagebox.showinfo("Sucesso", f"Gasto de R${valor_float:.2f} na categoria '{categoria}' adicionado com sucesso!", parent=janela)
-
     gastos.append({"valor": valor_float, "categoria": categoria})
     listar_gastos()
     atualizar_totais()
+
+    messagebox.showinfo("Sucesso", f"Gasto de R$ {valor_float:.2f} na categoria '{categoria}' adicionado com sucesso!", parent=janela)
     janela.destroy()
 
+
 def criar_gasto():
-    nome_usuario = entry_nome.get()
+    nome_usuario = entry_nome.get().strip()
+
     if not nome_usuario:
         messagebox.showerror("Erro", "Por favor, digite um nome válido.", parent=janelagastos)
         return
@@ -65,6 +71,7 @@ def criar_gasto():
 
     label_gasto = tk.Label(new_window, text="Digite o valor do gasto:")
     label_gasto.pack()
+
     entry_gasto = tk.Entry(new_window)
     entry_gasto.pack()
 
@@ -72,30 +79,39 @@ def criar_gasto():
     label_categoria.pack()
 
     categorias_var = tk.StringVar(value=categorias_gastos[0])
-
     entry_categoria = ttk.Combobox(new_window, textvariable=categorias_var, values=categorias_gastos, state="readonly")
-
     entry_categoria.pack()
 
     botao_salvar = tk.Button(new_window, text="Salvar Gasto", command=lambda: salvar_gasto(entry_gasto.get(), entry_categoria.get(), new_window))
     botao_salvar.pack(pady=10)
+
 
 def listar_gastos():
     lista_gastos.delete(0, tk.END)
     total = 0
 
     for gasto in gastos:
-        lista_gastos.insert(
-            tk.END,
-            f"R$ {gasto['valor']:.2f} — {gasto['categoria']}"
-        )
+        lista_gastos.insert(tk.END, f"R$ {gasto['valor']:.2f} — {gasto['categoria']}")
         total += gasto["valor"]
 
     label_total.config(text=f"Total: R$ {total:.2f}")
 
 
+def excluir_gasto():
+    selecao = lista_gastos.curselection()
+
+    if not selecao:
+        messagebox.showwarning("Aviso", "Por favor, selecione um gasto para excluir.", parent=janelagastos)
+        return
+
+    gastos.pop(selecao[0])
+    listar_gastos()
+    atualizar_totais()
+
+
 def criar_receita():
-    nome_usuario = entry_nome.get()
+    nome_usuario = entry_nome.get().strip()
+
     if not nome_usuario:
         messagebox.showerror("Erro", "Por favor, digite um nome válido.", parent=janelagastos)
         return
@@ -106,11 +122,13 @@ def criar_receita():
 
     label_receita = tk.Label(new_window, text="Digite o valor da receita:")
     label_receita.pack()
+
     entry_receita = tk.Entry(new_window)
     entry_receita.pack()
 
     label_categoria = tk.Label(new_window, text="Escolha a categoria da receita:")
     label_categoria.pack()
+
     categorias_var = tk.StringVar(value=categorias_receitas[0])
     entry_categoria = ttk.Combobox(new_window, textvariable=categorias_var, values=categorias_receitas, state="readonly")
     entry_categoria.pack()
@@ -118,12 +136,13 @@ def criar_receita():
     botao_salvar = tk.Button(new_window, text="Salvar Receita", command=lambda: salvar_receita(entry_receita.get(), entry_categoria.get(), new_window))
     botao_salvar.pack(pady=10)
 
+
 def salvar_receita(valor, categoria, janela):
-    valor = valor.strip().replace(',', '.')
+    valor = valor.strip().replace(",", ".")
     categoria = categoria.strip()
 
     if not valor or not categoria:
-        messagebox.showerror("Erro", "Por favor, preencha todos os campos.")
+        messagebox.showerror("Erro", "Por favor, preencha todos os campos.", parent=janela)
         return
 
     try:
@@ -136,11 +155,11 @@ def salvar_receita(valor, categoria, janela):
         messagebox.showerror("Erro", "Por favor, digite um valor positivo.", parent=janela)
         return
 
-    messagebox.showinfo("Sucesso", f"Receita de R${valor_float:.2f} na categoria '{categoria}' adicionada com sucesso!", parent=janela)
-
     receitas.append({"valor": valor_float, "categoria": categoria})
     listar_receitas()
     atualizar_totais()
+
+    messagebox.showinfo("Sucesso", f"Receita de R$ {valor_float:.2f} na categoria '{categoria}' adicionada com sucesso!", parent=janela)
     janela.destroy()
 
 
@@ -149,13 +168,23 @@ def listar_receitas():
     total = 0
 
     for receita in receitas:
-        lista_receitas.insert(
-            tk.END,
-            f"R$ {receita['valor']:.2f} — {receita['categoria']}"
-        )
+        lista_receitas.insert(tk.END, f"R$ {receita['valor']:.2f} — {receita['categoria']}")
         total += receita["valor"]
 
     label_total_receitas.config(text=f"Total: R$ {total:.2f}")
+
+
+def excluir_receita():
+    selecao = lista_receitas.curselection()
+
+    if not selecao:
+        messagebox.showwarning("Aviso", "Por favor, selecione uma receita para excluir.", parent=janelagastos)
+        return
+
+    receitas.pop(selecao[0])
+    listar_receitas()
+    atualizar_totais()
+
 
 def atualizar_totais():
     total_gastos = sum(gasto["valor"] for gasto in gastos)
@@ -166,33 +195,32 @@ def atualizar_totais():
     label_total_receitas.config(text=f"Total de Receitas: R$ {total_receitas:.2f}")
     label_saldo.config(text=f"Saldo: R$ {saldo:.2f}")
 
+
 janelagastos = tk.Tk()
 janelagastos.geometry("1200x800")
-
 janelagastos.title("Controle Financeiro")
+
+tk.Label(janelagastos, text="Controle Financeiro", font=("Arial", 16)).pack(pady=10)
 
 label_nome = tk.Label(janelagastos, text="Digite seu nome:")
 label_nome.pack()
 
 entry_nome = tk.Entry(janelagastos)
 entry_nome.pack()
+
 botao_confirmar = tk.Button(janelagastos, text="Confirmar", command=criar_nome_usuario)
 botao_confirmar.pack()
 
 botao_adicionar_gasto = tk.Button(janelagastos, text="Adicionar Gasto", command=criar_gasto)
-
 botao_adicionar_receita = tk.Button(janelagastos, text="Adicionar Receita", command=criar_receita)
+botao_excluir_gasto = tk.Button(janelagastos, text="Excluir Gasto Selecionado", command=excluir_gasto)
+botao_excluir_receita = tk.Button(janelagastos, text="Excluir Receita Selecionada", command=excluir_receita)
 
 lista_gastos = tk.Listbox(janelagastos, width=45, height=10)
-
 label_total = tk.Label(janelagastos, text="Total: R$ 0,00")
 
 lista_receitas = tk.Listbox(janelagastos, width=45, height=10)
-
 label_total_receitas = tk.Label(janelagastos, text="Total de Receitas: R$ 0,00")
-
 label_saldo = tk.Label(janelagastos, text="Saldo: R$ 0,00")
-
-tk.Label(janelagastos, text="Controle Financeiro", font=("Arial", 16)).pack(pady=10)
 
 janelagastos.mainloop()
