@@ -1,4 +1,3 @@
-
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
@@ -39,7 +38,6 @@ def mes_atual():
 
 
 def obter_meses():
-
     meses = set()
 
     for gasto in gastos:
@@ -66,7 +64,6 @@ def obter_meses():
 
 
 def salvar_dados():
-
     dados = {
         "nome": nome_usuario,
         "gastos": gastos,
@@ -91,19 +88,13 @@ def salvar_dados():
 
 
 def carregar_dados():
-
     global gastos, receitas, nome_usuario
 
     if not os.path.exists(arquivo_json):
         return
 
     try:
-        with open(
-            arquivo_json,
-            "r",
-            encoding="utf-8"
-        ) as arquivo:
-
+        with open(arquivo_json, "r", encoding="utf-8") as arquivo:
             dados = json.load(arquivo)
 
         nome_usuario = dados.get("nome", "")
@@ -111,7 +102,6 @@ def carregar_dados():
         receitas = dados.get("receitas", [])
 
     except Exception as erro:
-
         messagebox.showerror(
             "Erro",
             f"Não foi possível carregar os dados:\n{erro}",
@@ -124,23 +114,15 @@ def carregar_dados():
 
 
 def iniciar_programa():
-
     if nome_usuario:
-
         mostrar_interface()
-
     else:
-
-        label_nome.config(
-            text="Digite seu nome:"
-        )
-
+        label_nome.config(text="Digite seu nome:")
         entry_nome.pack()
         botao_confirmar.pack(pady=5)
 
 
 def mostrar_interface():
-
     label_nome.config(
         text=f"Bem-vindo(a), {nome_usuario}!",
         fg="black"
@@ -155,7 +137,6 @@ def mostrar_interface():
     botao_excluir_gasto.pack(pady=5)
 
     lista_gastos.pack(pady=5)
-
     label_total.pack()
 
     botao_adicionar_receita.pack(pady=5)
@@ -164,7 +145,6 @@ def mostrar_interface():
     botao_excluir_receita.pack(pady=5)
 
     lista_receitas.pack(pady=5)
-
     label_total_receitas.pack()
     label_saldo.pack(pady=10)
 
@@ -176,24 +156,19 @@ def mostrar_interface():
 
 
 def criar_nome_usuario():
-
     global nome_usuario
 
     nome = entry_nome.get().strip()
 
     if not nome:
-
         label_nome.config(
             text="Por favor, digite um nome válido.",
             fg="red"
         )
-
         return
 
     nome_usuario = nome
-
     salvar_dados()
-
     mostrar_interface()
 
 
@@ -205,48 +180,25 @@ def criar_gasto_fixo():
     abrir_janela_gasto(True)
 
 
-def abrir_janela_gasto(
-    fixo,
-    gasto_editar=None,
-    indice=None
-):
-
+def abrir_janela_gasto(gasto_fixo, gasto_editar=None, indice=None):
     new_window = tk.Toplevel(janelagastos)
 
     if gasto_editar is None:
-
-        if fixo:
-            new_window.title(
-                "Adicionar Gasto Fixo"
-            )
+        if gasto_fixo:
+            new_window.title("Adicionar Gasto Fixo")
         else:
-            new_window.title(
-                "Adicionar Gasto"
-            )
-
+            new_window.title("Adicionar Gasto")
     else:
-
-        new_window.title(
-            "Editar Gasto"
-        )
+        new_window.title("Editar Gasto")
 
     new_window.geometry("600x400")
 
-    tk.Label(
-        new_window,
-        text="Digite o valor do gasto:"
-    ).pack(pady=5)
+    tk.Label(new_window, text="Digite o valor do gasto:").pack(pady=5)
 
-    entry_gasto = tk.Entry(
-        new_window
-    )
-
+    entry_gasto = tk.Entry(new_window)
     entry_gasto.pack()
 
-    tk.Label(
-        new_window,
-        text="Escolha a categoria do gasto:"
-    ).pack(pady=5)
+    tk.Label(new_window, text="Escolha a categoria do gasto:").pack(pady=5)
 
     categorias_var = tk.StringVar()
 
@@ -256,61 +208,43 @@ def abrir_janela_gasto(
         values=categorias_gastos,
         state="readonly"
     )
-
     entry_categoria.pack()
 
     if gasto_editar is not None:
-
-        entry_gasto.insert(
-            0,
-            str(gasto_editar["valor"])
-        )
-
-        entry_categoria.set(
-            gasto_editar["categoria"]
-        )
+        entry_gasto.insert(0, str(gasto_editar["valor"]))
+        entry_categoria.set(gasto_editar["categoria"])
 
     def salvar():
-
         valor = entry_gasto.get().strip().replace(",", ".")
         categoria = entry_categoria.get().strip()
 
         if not valor or not categoria:
-
             messagebox.showerror(
                 "Erro",
                 "Por favor, preencha todos os campos.",
                 parent=new_window
             )
-
             return
 
         try:
-
             valor_float = float(valor)
-
         except ValueError:
-
             messagebox.showerror(
                 "Erro",
                 "Digite um valor numérico válido.",
                 parent=new_window
             )
-
             return
 
         if valor_float <= 0:
-
             messagebox.showerror(
                 "Erro",
                 "Digite um valor positivo.",
                 parent=new_window
             )
-
             return
 
         if gasto_editar is not None:
-
             gastos[indice]["valor"] = valor_float
             gastos[indice]["categoria"] = categoria
 
@@ -325,14 +259,13 @@ def abrir_janela_gasto(
             )
 
         else:
-
             novo_gasto = {
                 "valor": valor_float,
                 "categoria": categoria,
-                "fixo": fixo
+                "fixo": gasto_fixo
             }
 
-            if not fixo:
+            if not gasto_fixo:
                 novo_gasto["data"] = data_atual()
 
             gastos.append(novo_gasto)
@@ -349,106 +282,62 @@ def abrir_janela_gasto(
 
         new_window.destroy()
 
-    tk.Button(
-        new_window,
-        text="Salvar",
-        command=salvar
-    ).pack(pady=15)
+    tk.Button(new_window, text="Salvar", command=salvar).pack(pady=15)
 
 
 def gastos_visiveis():
-
     resultado = []
 
     for indice, gasto in enumerate(gastos):
-
         if gasto.get("fixo", False):
-
-            resultado.append(
-                (indice, gasto)
-            )
-
+            resultado.append((indice, gasto))
         else:
+            data_gasto = gasto.get("data", "")
 
-            data_gasto = gasto.get(
-                "data",
-                ""
-            )
-
-            if data_gasto.endswith(
-                mes_atual()
-            ):
-
-                resultado.append(
-                    (indice, gasto)
-                )
+            if data_gasto.endswith(mes_atual()):
+                resultado.append((indice, gasto))
 
     return sorted(
         resultado,
-        key=lambda item: not item[1].get(
-            "fixo",
-            False
-        )
+        key=lambda item: not item[1].get("fixo", False)
     )
 
 
 def listar_gastos():
-
-    lista_gastos.delete(
-        0,
-        tk.END
-    )
-
+    lista_gastos.delete(0, tk.END)
     total = 0
 
     for indice, gasto in gastos_visiveis():
-
         if gasto.get("fixo", False):
-
             texto = (
-                f"FIXO — R$ "
-                f"{gasto['valor']:.2f} — "
+                f"FIXO — R$ {gasto['valor']:.2f} — "
                 f"{gasto['categoria']}"
             )
-
         else:
-
             texto = (
-                f"{gasto['data']} — R$ "
-                f"{gasto['valor']:.2f} — "
+                f"{gasto['data']} — R$ {gasto['valor']:.2f} — "
                 f"{gasto['categoria']}"
             )
 
-        lista_gastos.insert(
-            tk.END,
-            texto
-        )
-
+        lista_gastos.insert(tk.END, texto)
         total += gasto["valor"]
 
-    label_total.config(
-        text=f"Total de Gastos: R$ {total:.2f}"
-    )
+    label_total.config(text=f"Total de Gastos: R$ {total:.2f}")
 
 
 def editar_gasto():
-
     selecao = lista_gastos.curselection()
 
     if not selecao:
-
         messagebox.showwarning(
             "Aviso",
             "Selecione um gasto para editar.",
             parent=janelagastos
         )
-
         return
 
     posicao = selecao[0]
-
     lista = gastos_visiveis()
-
     indice_real, gasto = lista[posicao]
 
     abrir_janela_gasto(
@@ -459,23 +348,18 @@ def editar_gasto():
 
 
 def excluir_gasto():
-
     selecao = lista_gastos.curselection()
 
     if not selecao:
-
         messagebox.showwarning(
             "Aviso",
             "Selecione um gasto para excluir.",
             parent=janelagastos
         )
-
         return
 
     posicao = selecao[0]
-
     lista = gastos_visiveis()
-
     indice_real, gasto = lista[posicao]
 
     confirmacao = messagebox.askyesno(
@@ -488,7 +372,6 @@ def excluir_gasto():
         return
 
     gastos.pop(indice_real)
-
     salvar_dados()
     listar_gastos()
     atualizar_totais()
@@ -502,55 +385,25 @@ def criar_receita_fixa():
     abrir_janela_receita(True)
 
 
-def abrir_janela_receita(
-    fixo,
-    receita_editar=None,
-    indice=None
-):
-
-    new_window = tk.Toplevel(
-        janelagastos
-    )
+def abrir_janela_receita(receita_fixa, receita_editar=None, indice=None):
+    new_window = tk.Toplevel(janelagastos)
 
     if receita_editar is None:
-
-        if fixo:
-
-            new_window.title(
-                "Adicionar Receita Fixa"
-            )
-
+        if receita_fixa:
+            new_window.title("Adicionar Receita Fixa")
         else:
-
-            new_window.title(
-                "Adicionar Receita"
-            )
-
+            new_window.title("Adicionar Receita")
     else:
+        new_window.title("Editar Receita")
 
-        new_window.title(
-            "Editar Receita"
-        )
+    new_window.geometry("600x400")
 
-    new_window.geometry(
-        "600x400"
-    )
+    tk.Label(new_window, text="Digite o valor da receita:").pack(pady=5)
 
-    tk.Label(
-        new_window,
-        text="Digite o valor da receita:"
-    ).pack(pady=5)
-
-    entry_receita = tk.Entry(
-        new_window
-    )
-
+    entry_receita = tk.Entry(new_window)
     entry_receita.pack()
 
-    tk.Label(
-        new_window,
-        text="Escolha a categoria da receita:"
-    ).pack(pady=5)
+    tk.Label(new_window, text="Escolha a categoria da receita:").pack(pady=5)
 
     categorias_var = tk.StringVar()
 
@@ -560,71 +413,43 @@ def abrir_janela_receita(
         values=categorias_receitas,
         state="readonly"
     )
-
     entry_categoria.pack()
 
     if receita_editar is not None:
-
-        entry_receita.insert(
-            0,
-            str(receita_editar["valor"])
-        )
-
-        entry_categoria.set(
-            receita_editar["categoria"]
-        )
+        entry_receita.insert(0, str(receita_editar["valor"]))
+        entry_categoria.set(receita_editar["categoria"])
 
     def salvar():
-
-        valor = (
-            entry_receita
-            .get()
-            .strip()
-            .replace(",", ".")
-        )
-
-        categoria = (
-            entry_categoria
-            .get()
-            .strip()
-        )
+        valor = entry_receita.get().strip().replace(",", ".")
+        categoria = entry_categoria.get().strip()
 
         if not valor or not categoria:
-
             messagebox.showerror(
                 "Erro",
                 "Por favor, preencha todos os campos.",
                 parent=new_window
             )
-
             return
 
         try:
-
             valor_float = float(valor)
-
         except ValueError:
-
             messagebox.showerror(
                 "Erro",
                 "Digite um valor numérico válido.",
                 parent=new_window
             )
-
             return
 
         if valor_float <= 0:
-
             messagebox.showerror(
                 "Erro",
                 "Digite um valor positivo.",
                 parent=new_window
             )
-
             return
 
         if receita_editar is not None:
-
             receitas[indice]["valor"] = valor_float
             receitas[indice]["categoria"] = categoria
 
@@ -639,22 +464,16 @@ def abrir_janela_receita(
             )
 
         else:
-
             nova_receita = {
                 "valor": valor_float,
                 "categoria": categoria,
-                "fixo": fixo
+                "fixo": receita_fixa
             }
 
-            if not fixo:
+            if not receita_fixa:
+                nova_receita["data"] = data_atual()
 
-                nova_receita["data"] = (
-                    data_atual()
-                )
-
-            receitas.append(
-                nova_receita
-            )
+            receitas.append(nova_receita)
 
             salvar_dados()
             listar_receitas()
@@ -668,81 +487,44 @@ def abrir_janela_receita(
 
         new_window.destroy()
 
-    tk.Button(
-        new_window,
-        text="Salvar",
-        command=salvar
-    ).pack(pady=15)
+    tk.Button(new_window, text="Salvar", command=salvar).pack(pady=15)
 
 
 def receitas_visiveis():
-
     resultado = []
 
     for indice, receita in enumerate(receitas):
-
         if receita.get("fixo", False):
-
-            resultado.append(
-                (indice, receita)
-            )
-
+            resultado.append((indice, receita))
         else:
+            data_receita = receita.get("data", "")
 
-            data_receita = receita.get(
-                "data",
-                ""
-            )
-
-            if data_receita.endswith(
-                mes_atual()
-            ):
-
-                resultado.append(
-                    (indice, receita)
-                )
+            if data_receita.endswith(mes_atual()):
+                resultado.append((indice, receita))
 
     return sorted(
         resultado,
-        key=lambda item: not item[1].get(
-            "fixo",
-            False
-        )
+        key=lambda item: not item[1].get("fixo", False)
     )
 
 
 def listar_receitas():
-
-    lista_receitas.delete(
-        0,
-        tk.END
-    )
-
+    lista_receitas.delete(0, tk.END)
     total = 0
 
     for indice, receita in receitas_visiveis():
-
         if receita.get("fixo", False):
-
             texto = (
-                f"FIXO — R$ "
-                f"{receita['valor']:.2f} — "
+                f"FIXO — R$ {receita['valor']:.2f} — "
                 f"{receita['categoria']}"
             )
-
         else:
-
             texto = (
-                f"{receita['data']} — R$ "
-                f"{receita['valor']:.2f} — "
+                f"{receita['data']} — R$ {receita['valor']:.2f} — "
                 f"{receita['categoria']}"
             )
 
-        lista_receitas.insert(
-            tk.END,
-            texto
-        )
-
+        lista_receitas.insert(tk.END, texto)
         total += receita["valor"]
 
     label_total_receitas.config(
@@ -751,23 +533,18 @@ def listar_receitas():
 
 
 def editar_receita():
-
     selecao = lista_receitas.curselection()
 
     if not selecao:
-
         messagebox.showwarning(
             "Aviso",
             "Selecione uma receita para editar.",
             parent=janelagastos
         )
-
         return
 
     posicao = selecao[0]
-
     lista = receitas_visiveis()
-
     indice_real, receita = lista[posicao]
 
     abrir_janela_receita(
@@ -778,23 +555,18 @@ def editar_receita():
 
 
 def excluir_receita():
-
     selecao = lista_receitas.curselection()
 
     if not selecao:
-
         messagebox.showwarning(
             "Aviso",
             "Selecione uma receita para excluir.",
             parent=janelagastos
         )
-
         return
 
     posicao = selecao[0]
-
     lista = receitas_visiveis()
-
     indice_real, receita = lista[posicao]
 
     confirmacao = messagebox.askyesno(
@@ -807,28 +579,19 @@ def excluir_receita():
         return
 
     receitas.pop(indice_real)
-
     salvar_dados()
     listar_receitas()
     atualizar_totais()
 
 
 def calcular_gastos_mes(mes):
-
     total = 0
 
     for gasto in gastos:
-
         if gasto.get("fixo", False):
-
             total += gasto["valor"]
-
         else:
-
-            data = gasto.get(
-                "data",
-                ""
-            )
+            data = gasto.get("data", "")
 
             if data.endswith(mes):
                 total += gasto["valor"]
@@ -837,21 +600,13 @@ def calcular_gastos_mes(mes):
 
 
 def calcular_receitas_mes(mes):
-
     total = 0
 
     for receita in receitas:
-
         if receita.get("fixo", False):
-
             total += receita["valor"]
-
         else:
-
-            data = receita.get(
-                "data",
-                ""
-            )
+            data = receita.get("data", "")
 
             if data.endswith(mes):
                 total += receita["valor"]
@@ -860,11 +615,7 @@ def calcular_receitas_mes(mes):
 
 
 def formatar_mes(mes):
-
-    data = datetime.strptime(
-        mes,
-        "%m/%Y"
-    )
+    data = datetime.strptime(mes, "%m/%Y")
 
     meses = [
         "Janeiro",
@@ -885,49 +636,27 @@ def formatar_mes(mes):
 
 
 def calcular_variacao(atual, anterior):
-
     if anterior == 0:
-
         if atual == 0:
             return "Sem alteração"
 
         return "Não é possível calcular a porcentagem"
 
-    variacao = (
-        (atual - anterior)
-        / anterior
-    ) * 100
+    variacao = ((atual - anterior) / anterior) * 100
 
     if variacao > 0:
-
-        return (
-            f"Aumento de "
-            f"{variacao:.2f}%"
-        )
+        return f"Aumento de {variacao:.2f}%"
 
     if variacao < 0:
-
-        return (
-            f"Diminuição de "
-            f"{abs(variacao):.2f}%"
-        )
+        return f"Diminuição de {abs(variacao):.2f}%"
 
     return "Sem alteração"
 
 
 def abrir_relatorio():
-
-    janela_relatorio = tk.Toplevel(
-        janelagastos
-    )
-
-    janela_relatorio.title(
-        "Relatório Financeiro"
-    )
-
-    janela_relatorio.geometry(
-        "900x700"
-    )
+    janela_relatorio = tk.Toplevel(janelagastos)
+    janela_relatorio.title("Relatório Financeiro")
+    janela_relatorio.geometry("900x700")
 
     tk.Label(
         janela_relatorio,
@@ -937,93 +666,35 @@ def abrir_relatorio():
 
     meses = obter_meses()
 
-    frame = tk.Frame(
-        janela_relatorio
-    )
-
-    frame.pack(
-        fill="both",
-        expand=True,
-        padx=20,
-        pady=10
-    )
+    frame = tk.Frame(janela_relatorio)
+    frame.pack(fill="both", expand=True, padx=20, pady=10)
 
     tabela = ttk.Treeview(
         frame,
-        columns=(
-            "mes",
-            "gastos",
-            "receitas",
-            "saldo"
-        ),
+        columns=("mes", "gastos", "receitas", "saldo"),
         show="headings"
     )
 
-    tabela.heading(
-        "mes",
-        text="Mês"
-    )
+    tabela.heading("mes", text="Mês")
+    tabela.heading("gastos", text="Gastos")
+    tabela.heading("receitas", text="Receitas")
+    tabela.heading("saldo", text="Saldo")
 
-    tabela.heading(
-        "gastos",
-        text="Gastos"
-    )
+    tabela.column("mes", width=200)
+    tabela.column("gastos", width=150)
+    tabela.column("receitas", width=150)
+    tabela.column("saldo", width=150)
 
-    tabela.heading(
-        "receitas",
-        text="Receitas"
-    )
-
-    tabela.heading(
-        "saldo",
-        text="Saldo"
-    )
-
-    tabela.column(
-        "mes",
-        width=200
-    )
-
-    tabela.column(
-        "gastos",
-        width=150
-    )
-
-    tabela.column(
-        "receitas",
-        width=150
-    )
-
-    tabela.column(
-        "saldo",
-        width=150
-    )
-
-    tabela.pack(
-        fill="both",
-        expand=True
-    )
+    tabela.pack(fill="both", expand=True)
 
     gastos_meses = []
 
     for mes in meses:
+        total_gastos = calcular_gastos_mes(mes)
+        total_receitas = calcular_receitas_mes(mes)
+        saldo = total_receitas - total_gastos
 
-        total_gastos = calcular_gastos_mes(
-            mes
-        )
-
-        total_receitas = calcular_receitas_mes(
-            mes
-        )
-
-        saldo = (
-            total_receitas
-            - total_gastos
-        )
-
-        gastos_meses.append(
-            (mes, total_gastos)
-        )
+        gastos_meses.append((mes, total_gastos))
 
         tabela.insert(
             "",
@@ -1042,44 +713,21 @@ def abrir_relatorio():
         font=("Arial", 14)
     ).pack(pady=10)
 
-    frame_comparacao = tk.Frame(
-        janela_relatorio
-    )
-
-    frame_comparacao.pack(
-        fill="x",
-        padx=30,
-        pady=5
-    )
+    frame_comparacao = tk.Frame(janela_relatorio)
+    frame_comparacao.pack(fill="x", padx=30, pady=5)
 
     if len(gastos_meses) < 2:
-
         tk.Label(
             frame_comparacao,
             text="Ainda não existem meses suficientes para comparar os gastos."
         ).pack()
-
     else:
+        for i in range(len(gastos_meses) - 1):
+            mes_atual_relatorio = gastos_meses[i]
+            mes_anterior_relatorio = gastos_meses[i + 1]
 
-        for i in range(
-            len(gastos_meses) - 1
-        ):
-
-            mes_atual_relatorio = (
-                gastos_meses[i]
-            )
-
-            mes_anterior_relatorio = (
-                gastos_meses[i + 1]
-            )
-
-            gasto_atual = (
-                mes_atual_relatorio[1]
-            )
-
-            gasto_anterior = (
-                mes_anterior_relatorio[1]
-            )
+            gasto_atual = mes_atual_relatorio[1]
+            gasto_anterior = mes_anterior_relatorio[1]
 
             variacao = calcular_variacao(
                 gasto_atual,
@@ -1097,20 +745,12 @@ def abrir_relatorio():
                 frame_comparacao,
                 text=texto,
                 font=("Arial", 11)
-            ).pack(
-                anchor="w",
-                pady=3
-            )
+            ).pack(anchor="w", pady=3)
 
-    tk.Button(
-        janela_relatorio,
-        text="Fechar",
-        command=janela_relatorio.destroy
-    ).pack(pady=15)
+    tk.Button(janela_relatorio, text="Fechar", command=janela_relatorio.destroy).pack(pady=15)
 
 
 def atualizar_totais():
-
     total_gastos = sum(
         gasto["valor"]
         for indice, gasto in gastos_visiveis()
@@ -1121,10 +761,7 @@ def atualizar_totais():
         for indice, receita in receitas_visiveis()
     )
 
-    saldo = (
-        total_receitas
-        - total_gastos
-    )
+    saldo = total_receitas - total_gastos
 
     label_total.config(
         text=f"Total de Gastos: R$ {total_gastos:.2f}"
@@ -1140,21 +777,14 @@ def atualizar_totais():
 
 
 janelagastos = tk.Tk()
-
-janelagastos.geometry(
-    "1200x800"
-)
-
-janelagastos.title(
-    "Controle Financeiro"
-)
+janelagastos.geometry("1200x800")
+janelagastos.title("Controle Financeiro")
 
 label_data = tk.Label(
     janelagastos,
     text=f"Data: {data_atual()}",
     font=("Arial", 12)
 )
-
 label_data.pack(pady=5)
 
 label_titulo = tk.Label(
@@ -1162,110 +792,34 @@ label_titulo = tk.Label(
     text="Controle Financeiro",
     font=("Arial", 16)
 )
-
 label_titulo.pack(pady=10)
 
-label_nome = tk.Label(
-    janelagastos,
-    text="Digite seu nome:"
-)
-
+label_nome = tk.Label(janelagastos, text="Digite seu nome:")
 label_nome.pack()
 
-entry_nome = tk.Entry(
-    janelagastos
-)
+entry_nome = tk.Entry(janelagastos)
+botao_confirmar = tk.Button(janelagastos, text="Confirmar", command=criar_nome_usuario)
 
-botao_confirmar = tk.Button(
-    janelagastos,
-    text="Confirmar",
-    command=criar_nome_usuario
-)
+botao_adicionar_gasto = tk.Button(janelagastos, text="Adicionar Gasto", command=criar_gasto)
+botao_adicionar_gasto_fixo = tk.Button(janelagastos, text="Adicionar Gasto Fixo", command=criar_gasto_fixo)
+botao_editar_gasto = tk.Button(janelagastos, text="Editar Gasto Selecionado", command=editar_gasto)
+botao_excluir_gasto = tk.Button(janelagastos, text="Excluir Gasto Selecionado", command=excluir_gasto)
 
-botao_adicionar_gasto = tk.Button(
-    janelagastos,
-    text="Adicionar Gasto",
-    command=criar_gasto
-)
+lista_gastos = tk.Listbox(janelagastos, width=60, height=10)
+label_total = tk.Label(janelagastos, text="Total de Gastos: R$ 0,00")
 
-botao_adicionar_gasto_fixo = tk.Button(
-    janelagastos,
-    text="Adicionar Gasto Fixo",
-    command=criar_gasto_fixo
-)
+botao_adicionar_receita = tk.Button(janelagastos, text="Adicionar Receita", command=criar_receita)
+botao_adicionar_receita_fixa = tk.Button(janelagastos, text="Adicionar Receita Fixa", command=criar_receita_fixa)
+botao_editar_receita = tk.Button(janelagastos, text="Editar Receita Selecionada", command=editar_receita)
+botao_excluir_receita = tk.Button(janelagastos, text="Excluir Receita Selecionada", command=excluir_receita)
 
-botao_editar_gasto = tk.Button(
-    janelagastos,
-    text="Editar Gasto Selecionado",
-    command=editar_gasto
-)
+lista_receitas = tk.Listbox(janelagastos, width=60, height=10)
+label_total_receitas = tk.Label(janelagastos, text="Total de Receitas: R$ 0,00")
+label_saldo = tk.Label(janelagastos, text="Saldo: R$ 0,00")
 
-botao_excluir_gasto = tk.Button(
-    janelagastos,
-    text="Excluir Gasto Selecionado",
-    command=excluir_gasto
-)
-
-lista_gastos = tk.Listbox(
-    janelagastos,
-    width=60,
-    height=10
-)
-
-label_total = tk.Label(
-    janelagastos,
-    text="Total de Gastos: R$ 0,00"
-)
-
-botao_adicionar_receita = tk.Button(
-    janelagastos,
-    text="Adicionar Receita",
-    command=criar_receita
-)
-
-botao_adicionar_receita_fixa = tk.Button(
-    janelagastos,
-    text="Adicionar Receita Fixa",
-    command=criar_receita_fixa
-)
-
-botao_editar_receita = tk.Button(
-    janelagastos,
-    text="Editar Receita Selecionada",
-    command=editar_receita
-)
-
-botao_excluir_receita = tk.Button(
-    janelagastos,
-    text="Excluir Receita Selecionada",
-    command=excluir_receita
-)
-
-lista_receitas = tk.Listbox(
-    janelagastos,
-    width=60,
-    height=10
-)
-
-label_total_receitas = tk.Label(
-    janelagastos,
-    text="Total de Receitas: R$ 0,00"
-)
-
-label_saldo = tk.Label(
-    janelagastos,
-    text="Saldo: R$ 0,00"
-)
-
-botao_relatorio = tk.Button(
-    janelagastos,
-    text="Relatório",
-    command=abrir_relatorio
-)
+botao_relatorio = tk.Button(janelagastos, text="Relatório", command=abrir_relatorio)
 
 carregar_dados()
-
 iniciar_programa()
 
 janelagastos.mainloop()
-
